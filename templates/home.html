@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container my-5 py-5">
+    <div class="row">
+        <!-- Left-side card -->
+        <div class="col-md-4">
+            <div class="container d-grid">
+                <h5 class="text-white">Enter a City Name</h5>
+                <form method="POST" class="d-grid" role="search">
+                    {% csrf_token %}
+                    <input class="form-control me-2 my-2" id="city_name" name="city_name" type="search" placeholder="Eg., New York, London, Tokyo" aria-label="Search" required>
+                    <button class="btn btn-dark my-0" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+        <!-- Right-side card -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body bg-primary text-white">
+                    <div class="row">
+                        <div class="col-md-8">
+                            {% if current_weather %}
+                            <h3> {{ current_weather.location }} </h3>
+                            <p>Temperature: {{ current_weather.temperature }}°C</p>
+                            <p>Wind: {{ current_weather.wind_speed }} km/h</p>
+                            <p>Humidity: {{ current_weather.humidity }}%</p>
+                            {% endif %}
+                            {% if error_message %}
+                            <p>{{ error_message }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <!-- Image on the right side -->
+                            <img src="{{ current_weather.icon_code }}" alt="{{ current_weather.condition }}" class="img-fluid w-100">
+                            <p class="text-center">{{ current_weather.condition }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Next 3-Day Forecast -->
+    {% if forecast_data %}
+    <div class="container">
+        <h4 class="my-4 text-white">Next 3-Day Forecast</h4>
+        <div class="row">
+            {% for forecast in forecast_data %}
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                <div class="card bg-secondary text-white">
+                    <p class="ms-4 mt-2 fw-bold">({{ forecast.date }})</p>
+                    <img src="{{ forecast.icon_code }}" class="card-img-top mx-auto mt-3" alt="{{ forecast.condition }}" style="width: 110px;">
+                    <div class="card-body bg-secondary text-white">
+                        <p>Max Temperature: {{ forecast.max_temp }}°C</p>
+                        <p>Min Temperature: {{ forecast.min_temp }}°C</p>
+                        <p>Precipitation: {{ forecast.precipitation }} mm</p>
+                        <p>Condition: {{ forecast.condition }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    <!-- End Next 3-day Forecast -->
+
+    <!-- Last 3-Day Forecast -->
+    {% if historical_weather_data %}
+    <div class="container">
+        <h4 class="my-4 text-white">Last 3-Day Forecast</h4>
+        <div class="row">
+            {% for historical_weather in historical_weather_data %}
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                <div class="card bg-secondary text-white">
+                    <p class="ms-4 mt-2 fw-bold">({{ historical_weather.date }})</p>
+                    <img src="{{ historical_weather.icon_url }}" class="card-img-top mx-auto mt-3" alt="{{ historical_weather.condition }}" style="width: 110px;">
+                    <div class="card-body bg-secondary text-white">
+                        <p>Max Temperature: {{ historical_weather.max_temp }}°C</p>
+                        <p>Min Temperature: {{ historical_weather.min_temp }}°C</p>
+                        <p>Precipitation: {{ historical_weather.precipitation }} mm</p>
+                        <p>Condition: {{ historical_weather.condition }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>No historical weather data available.</p>
+    </div>
+    {% endif %}
+    <!-- End Last 3-day Forecast -->
+</div>
+
+{% endblock %}
